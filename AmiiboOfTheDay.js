@@ -194,7 +194,7 @@ class AmiiboOfTheDayWidget{
 
   getBackgroundForSeries(type){
     const typeColorMap = {
-      "Legend Of Zelda": "#9e9d6b",
+      "Legend Of Zelda": "#c7fc89",
       "Super Smash Bros.": "#a0a0a1",
       "Super Mario Bros.": "#e95757",
       "Pikmin": "#c49a88",
