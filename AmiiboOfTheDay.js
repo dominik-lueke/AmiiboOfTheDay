@@ -75,7 +75,7 @@ class AmiiboOfTheDayWidget{
     // init widget
     this.widget = new ListWidget()
     this.widget.setPadding( 0, 0, 0, 0 )
-    this.widget.refreshAfterDate = new Date (currentIntervalStartInMillis + oneHourInMillis) // only update once an hour
+//     this.widget.refreshAfterDate = new Date (currentIntervalStartInMillis + oneHourInMillis) // only update once an hour
 
     // widget + font size 
     this.widgetHeight = 338
@@ -135,9 +135,9 @@ class AmiiboOfTheDayWidget{
     const wTitle = this.addTitle(data.name)
     // image
     const wImage = this.addImage(image)
-    // types
+    // character
     const gameCharacterInfoText = `${ data.character } • ${ data.gameSeries }`
-    // dimensions
+    // amiiboseried
     const amiiboSeriesInfoText = `${ data.amiiboSeries }`
     // info
     const infoSeparatorText = this.largeWidget || this.mediumWidget ? " • " : "\n"
@@ -190,8 +190,8 @@ class AmiiboOfTheDayWidget{
   getBackgroundForSeries(type){
     const typeColorMap = {
       "Legend Of Zelda": "#c7fc89",
-      "Super Smash Bros.": "#a0a0a1",
-      "Super Mario Bros.": "#e95757",
+      "Super Smash Bros.": "#aaaaaa",
+      "Super Mario Bros.": "#e97777",
       "Pikmin": "#c49a88",
       "Fire Emblem": "#da6e71",
       "Metroid": "#76adc0",
@@ -202,9 +202,9 @@ class AmiiboOfTheDayWidget{
       "8-bit Mario": "#4eb887",
       "Yoshi's Woolly World": "#add58f",
       "Mega Man": "#e95757",
-      "Error" : "#ffffff"
+      "Error" : "#F56565"
     }
-    let baseColorHex = typeColorMap.hasOwnProperty(type) ? typeColorMap[type] : "#EEEEEE"
+    let baseColorHex = typeColorMap.hasOwnProperty(type) ? typeColorMap[type] : "#bbbbbb"
     let startColor = new Color(this.lightenDarkenColor(baseColorHex, 40))
     let endColor = new Color(this.lightenDarkenColor(baseColorHex, 20))
     let gradient = new LinearGradient()
@@ -434,7 +434,9 @@ class AmiiboDataCache extends WidgetDataCache {
   amiiboDataFileIsOutdated(dataFilepath) {
     let today = new Date()
     let creationDate= this.fm.creationDate(dataFilepath)
-    return (today.getFullYear() > creationDate.getFullYear() || today.getMonth() > creationDate.getMonth() || today.getDate() > creationDate.getDate())
+    // do not access API at the first execution of the new day as all instances of all scripts would do this. Give it a 1/24 chance
+    let random = Math.floor(Math.random() * 24) == today.getHours()
+    return random && (today.getFullYear() > creationDate.getFullYear() || today.getMonth() > creationDate.getMonth() || today.getDate() > creationDate.getDate())
   }
 
   getAmiiboIdDirectory(id) {
@@ -468,7 +470,10 @@ class AmiiboDataCache extends WidgetDataCache {
           amiiboData = this.data[paramId]
           amiiboData.id = paramId
         } else {
-          amiiboData =  this.data.find(amiibo => amiibo.name == paramId)
+          let paramArr = id.split("/")
+          let amiiboName = paramArr[0]
+          let amiiboNameIndex = paramArr.length==2&&Number.isInteger(parseInt(paramArr[1]))?parseInt(paramArr[1]):1
+          amiiboData =  this.data.filter(amiibo => amiibo.name == amiiboName)[amiiboNameIndex-1]
           amiiboData.id = this.data.indexOf(amiiboData)
         }
         return amiiboData
@@ -498,6 +503,9 @@ class AmiiboDataCache extends WidgetDataCache {
     let directory = this.createAmiiboidDirectory(id)
     let dataFilepath = this.fm.joinPath( directory, this.amiiboDataFileName(id))
     this.fm.writeString( dataFilepath, JSON.stringify(data))
+    // set names in cache
+    let namesPath = this.fm.joinPath( directory, "names.txt" )
+    this.fm.writeString( namesPath, data.map(amiibo => `${amiibo.name} (${amiibo.amiiboSeries})`).join("\n") )
     // set data in memory
     this.data = data
   }
