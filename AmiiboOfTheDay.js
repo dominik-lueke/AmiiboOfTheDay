@@ -191,7 +191,7 @@ class AmiiboOfTheDayWidget{
     const typeColorMap = {
       "Legend Of Zelda": "#c7fc89",
       "Super Smash Bros.": "#aaaaaa",
-      "Super Mario Bros.": "#e97777",
+      "Super Mario Bros.": "#f6f6f6",
       "Pikmin": "#c49a88",
       "Fire Emblem": "#da6e71",
       "Metroid": "#76adc0",
