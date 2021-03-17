@@ -47,7 +47,7 @@ Default is `24`.
 
 <img src="img/img_Config1.png" width="240px" />&nbsp;<img src="img/img_Config2.png" width="240px" />
 
-`#Mario`: Display "Mario"
+`#Mario`: Display "Mario" (you can find the available names in file `iCloud\scriptable\amiiboOfTheDay\full\names` where for every Amiibo the `<name> (<series>)` information is stored.
 
 `;6`: Display a new random Amiibo every 6 hours
 
